@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="MK2's blog，生命是一场幻觉，代码是一段人生。"/>
+  <link rel="stylesheet" href="/css/typo.css" />
+  <link rel="stylesheet" href="/css/prettify.css">
+  <script src="/js/jquery-1.7.min.js"></script>
+  <script src="/js/prettify.js"></script>
+  <title>Nodejs "Hello world" benchmark</title>
+  <style>
+     body {
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+     }
+     a{color:#09f;}
+     code{color:#080;}
+     h1, #tagline{display:inline;}
+     #wrapper{padding:5% 8%;min-width:480px;}
+     #tagline{font:0.8em serif;color:#888;display:inline-block;margin:0.1em 0 1.2em;}
+     #fork{position:fixed;top:0;right:0;_position:absolute;}
+  </style>
+</head>
+<body>
+
+<div id="wrapper" class="typo">
+
+<div id="header">
+<h3><a href="/">Home</a> | <a href="../">Prev</a></h3>
+</div> <!-- #header -->
+
+<div id="content">
+<h1>Nodejs "Hello world" benchmark</h1>
+
+<h2>新版本 nodejs 性能</h2>
+
+<p><a href="http://blog.nodejs.org/2011/11/05/node-v0-6-0/">node0.6.0 已经发布</a>了，性能提高如何呢？<br />本文将记录 nodejs 历史更新中所有版本的hello world性能测试。</p>
+
+<h3>测试环境</h3>
+
+<pre><code>$ uname -a
+Linux xxx 2.6.18-164.el5 #1 SMP Tue Aug 18 15:51:48 EDT 2009 x86_64 x86_64 x86_64 GNU/Linux
+
+$ cat /proc/cpuinfo
+Intel(R) Xeon(R) CPU           E5410  @ 2.33GHz
+</code></pre>
+
+<h3>测试 helloworld.js</h3>
+
+<pre><code>var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(1337, "127.0.0.1");
+console.log('Server running at <a href='http://127.0.0.1:1337/'>http://127.0.0.1:1337/</a>');
+</code></pre>
+
+<h3>http_load 压测命令</h3>
+
+<pre><code>$ http_load -p 100 -s 10 <a href='http://127.0.0.1:1337/'>http://127.0.0.1:1337/</a>
+</code></pre>
+
+<h2>测试结果: fetches/sec</h2>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(function() {
+  var datas = [
+    ['0', 8157, null, 7490, null, 7130],
+    ['1', 8240, null, 7975, 9347, 7136],
+    ['2', 8138, 8127, 7965, 9200, 7410],
+    ['3', 8070, 7931, 7930, 8999, 7500],
+    ['4', 8111, null, 7981, 9000, 7488],
+    ['5', 8060, 8073, 7960, 8880, 7480],
+    ['6', 8046, 6995, 7931, 7815, 7525],
+    ['7', 7791, 7098, 7916, 7871, null],
+    ['8', 7673, 7071, 6588, 7810, null],
+    ['9', null, 7259, 7606, null, null],
+    ['10', null, 8200, 7600, null, null],
+    ['11', null, null, 7558, null, null],
+    ['12', null, null, 7510, null, null]
+  ];
+  var versions = ['v0.6.x', 'v0.5.x', 'v0.4.x', 'v0.3.x', 'v0.2.x'];
+  drawChart(versions, datas);
+});
+
+function drawChart(versions, datas) {
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Version');
+  for (var i = 0; i < versions.length; i++) {
+    data.addColumn('number', versions[i] + ' QPS');
+  }
+  data.addRows(datas);
+  var options = {
+    width: 800, height: 500,
+    title: '"Hello world" benchmark in Nodejs'
+  };
+  var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+  chart.draw(data, options);
+}
+</script>
+
+<div id="chart_div"></div>
+
+<ul>
+<li>v0.7.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.7.0</th>
+    </tr>
+    <tr>
+        <td>7676</td>
+    </tr>
+</table>
+
+<ul>
+<li>v0.6.x</li>
+</ul>
+
+<table>
+  <tr>
+    <th>0.6.8</th><th>0.6.7</th><th>0.6.6</th><th>0.6.5</th><th>0.6.4</th><th>0.6.3</th><th>0.6.2</th><th>0.6.1</th><th>0.6.0</th>
+  </tr>
+  <tr>
+    <td>7673</td><td>7791</td><td>8046</td><td>8060</td><td>8111</td><td>8070</td><td>8138</td><td>8240</td><td>8157</td>
+  </tr>
+</table>
+
+<ul>
+<li>v0.5.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.5.10</th><th>0.5.9</th><th>0.5.8</th><th>0.5.7</th><th>0.5.6</th>
+        <th>0.5.5</th><th>0.5.4</th><th>0.5.3</th><th>0.5.2</th><th>0.5.1</th><th>0.5.0</th>
+    </tr>
+    <tr>
+        <td>8200</td><td>7259</td><td>7071</td><td>7098</td><td>6996</td>
+        <td>8073</td><td>-</td><td>7931</td><td>8127</td><td>-</td><td>-</td>
+    </tr>
+</table>
+
+<ul>
+<li>v0.4.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.4.12</th><th>0.4.11</th><th>0.4.10</th><th>0.4.9</th><th>0.4.8</th>
+        <th>0.4.7</th><th>0.4.6</th><th>0.4.5</th><th>0.4.4</th>
+        <th>0.4.3</th><th>0.4.2</th><th>0.4.1</th><th>0.4.0</th>
+    </tr>
+    <tr>
+        <td>7510</td><td>7558</td><td>7600</td><td>7606</td><td>6588</td>
+        <td>7916</td><td>7931</td><td>7960</td><td>7981</td>
+        <td>7930</td><td>7965</td><td>7975</td><td>7490</td>
+    </tr>
+</table>
+
+<ul>
+<li>v0.3.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.3.8</th><th>0.3.7</th><th>0.3.6</th><th>0.3.5</th><th>0.3.4</th>
+        <th>0.3.3</th><th>0.3.2</th><th>0.3.1</th><th>0.3.0</th>
+    </tr>
+    <tr>
+        <td>7810</td><td>7871</td><td>7815</td><td>8880</td><td>9000</td>
+        <td>8999</td><td>9200</td><td>9347</td><td>-</td>
+    </tr>
+</table>
+
+<ul>
+<li>v0.2.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.2.6</th><th>0.2.5</th><th>0.2.4</th><th>0.2.3</th>
+        <th>0.2.2</th><th>0.2.1</th><th>0.2.0</th>
+    </tr>
+    <tr>
+        <td>7525</td><td>7481</td><td>7489</td><td>7500</td>
+        <td>7410</td><td>7136</td><td>7130</td>
+    </tr>
+</table>
+
+<ul>
+<li>v0.1.x</li>
+</ul>
+
+<table>
+    <tr>
+        <th>0.1.104</th><th>0.1.103</th><th>0.1.102</th><th>0.1.101</th><th>0.1.100</th>
+        <th>0.1.99</th><th>0.1.98</th><th>0.1.97</th><th>0.1.96</th><th>0.1.95</th>
+        <th>0.1.94</th><th>0.1.93</th><th>0.1.92</th><th>0.1.91</th><th>0.1.90</th>
+        <th>0.1.0</th>
+    </tr>
+    <tr>
+        <td>7640</td><td>7538</td><td>7537</td><td>7674</td><td>7040</td>
+        <td>7280</td><td>7211</td><td>7340</td><td>7270</td><td>7210</td>
+        <td>7063</td><td>7931</td><td>8020</td><td>8561</td><td>8146</td>
+        <td>-</td>
+    </tr>
+</table>
+
+<h2>v0.6.0与v0.4.12的性能对比</h2>
+
+<p>在<a href="http://blog.nodejs.org/2011/11/05/node-v0-6-0/">v0.6.0更新</a> 说明文章中，列出的对比数据</p>
+
+<h3>v0.4.12 (linux) v0.6.0 (linux)</h3>
+
+<pre><code>http_simple.js /bytes/1024  5461 r/s    6263 r/s
+io.js read                  19.75 mB/s  26.63 mB/s
+io.js write                 21.60 mB/s  17.40 mB/s
+startup.js                  74.7 ms     49.6 ms
+</code></pre>
+
+<h3>v0.4.12 (windows: Cygwin)   v0.6.0 (windows)</h3>
+
+<pre><code>http_simple.js /bytes/1024  3858 r/s    5823 r/s
+io.js read                  12.41 mB/s  26.51 mB/s
+io.js write                 12.61 mB/s  33.58 mB/s
+startup.js                  152.81 ms   52.04 ms
+</code></pre>
+
+<p>v0.4 和 v0.6之间的更新说明请查看: <a href="https://github.com/joyent/node/wiki/API-changes-between-v0.4-and-v0.6">API-changes-between-v0.4-and-v0.6</a></p>
+
+<h2>node0.7.0</h2>
+
+<pre><code>7675.8 fetches/sec, 92109.6 bytes/sec
+msecs/connect: 0.050985 mean, 1.047 max, 0.02 min
+msecs/first-response: 12.9343 mean, 47.329 max, 2.926 min
+</code></pre>
+
+<h2>node0.6.7</h2>
+
+<pre><code>7790.79 fetches/sec, 93489.5 bytes/sec
+msecs/connect: 0.052154 mean, 0.716 max, 0.023 min
+msecs/first-response: 12.7397 mean, 41.609 max, 5.318 min
+</code></pre>
+
+<h2>node0.6.6</h2>
+
+<pre><code>8046.29 fetches/sec, 96555.5 bytes/sec
+msecs/connect: 0.0517639 mean, 0.396 max, 0.023 min
+msecs/first-response: 12.3359 mean, 36.495 max, 4.808 min
+</code></pre>
+
+<h2>node0.6.5</h2>
+
+<pre><code>8060.28 fetches/sec, 96723.4 bytes/sec
+msecs/connect: 0.0518643 mean, 0.702 max, 0.021 min
+msecs/first-response: 12.3109 mean, 35.02 max, 4.762 min
+</code></pre>
+
+<h2>node0.6.4</h2>
+
+<pre><code>8111 fetches/sec, 97332 bytes/sec
+msecs/connect: 0.051521 mean, 1.847 max, 0.021 min
+msecs/first-response: 12.2351 mean, 49.227 max, 1.847 min
+</code></pre>
+
+<h2>node0.6.3</h2>
+
+<pre><code>8070 fetches/sec, 96840 bytes/sec
+msecs/connect: 0.0517654 mean, 0.502 max, 0.02 min
+msecs/first-response: 12.2967 mean, 51.886 max, 5.151 min
+</code></pre>
+
+<h2>node0.6.2</h2>
+
+<pre><code>8137.79 fetches/sec, 97653.5 bytes/sec
+msecs/connect: 0.0515829 mean, 0.642 max, 0.021 min
+msecs/first-response: 12.1961 mean, 42.128 max, 3.111 min
+</code></pre>
+
+<h2>node0.6.1</h2>
+
+<pre><code>8239.6 fetches/sec, 98875.2 bytes/sec
+msecs/connect: 0.0530447 mean, 0.439 max, 0.022 min
+msecs/first-response: 12.0422 mean, 32.93 max, 1.846 min
+</code></pre>
+
+<h2>node0.6.0</h2>
+
+<pre><code>8157.38 fetches/sec, 97888.5 bytes/sec
+msecs/connect: 0.0512865 mean, 0.741 max, 0.022 min
+msecs/first-response: 12.1661 mean, 46.023 max, 4.57 min
+</code></pre>
+
+<h2>node0.5.10</h2>
+
+<pre><code>8200 fetches/sec, 98400 bytes/sec
+msecs/connect: 0.0517871 mean, 0.508 max, 0.024 min
+msecs/first-response: 12.0963 mean, 34.816 max, 4.831 min
+</code></pre>
+
+<h2>node0.5.9</h2>
+
+<pre><code>7258.88 fetches/sec, 87106.6 bytes/sec
+msecs/connect: 0.0521661 mean, 0.667 max, 0.022 min
+msecs/first-response: 13.6817 mean, 49.23 max, 3.31 min
+</code></pre>
+
+<h2>node0.5.8</h2>
+
+<pre><code>7070.8 fetches/sec, 84849.6 bytes/sec
+msecs/connect: 0.0523142 mean, 0.517 max, 0.022 min
+msecs/first-response: 14.0466 mean, 39.545 max, 6.215 min
+</code></pre>
+
+<h2>node0.5.7</h2>
+
+<pre><code>7097.59 fetches/sec, 85171.1 bytes/sec
+msecs/connect: 0.0526457 mean, 0.586 max, 0.024 min
+msecs/first-response: 13.9935 mean, 44.333 max, 5.604 min
+</code></pre>
+
+<h2>node0.5.6</h2>
+
+<pre><code>6995.6 fetches/sec, 83947.2 bytes/sec
+msecs/connect: 0.0525126 mean, 0.413 max, 0.022 min
+msecs/first-response: 14.1971 mean, 37.55 max, 6.123 min
+</code></pre>
+
+<h2>node0.5.5</h2>
+
+<pre><code>8073.3 fetches/sec, 96879.6 bytes/sec
+msecs/connect: 0.0509257 mean, 0.41 max, 0.02 min
+msecs/first-response: 12.2924 mean, 44.222 max, 4.323 min
+</code></pre>
+
+<h2>node0.5.4</h2>
+
+<p>出现编译错误:</p>
+
+<pre><code>/usr/bin/ld: skipping incompatible /usr/lib/libc.a when searching for -lc
+/home/admin/pkgs/node-v0.5.4/build/default/deps/uv/uv.a(eio.o): In function `eio__sync_file_range':
+/home/admin/pkgs/node-v0.5.4/build/default/deps/uv/src/eio/eio.c:1083: undefined reference to `sync_file_range'
+collect2: ld returned 1 exit status
+Waf: Leaving directory `/home/admin/pkgs/node-v0.5.4/build'
+Build failed:  -&gt; task failed (err #1): 
+    {task: cxx_link node_main_5.o,node_5.o,node_buffer_5.o,node_javascript_5.o,
+    node_extensions_5.o,node_http_parser_5.o,node_constants_5.o,node_file_5.o,
+    node_script_5.o,node_os_5.o,node_dtrace_5.o,node_string_5.o,timer_wrap_5.o,
+    handle_wrap_5.o,stream_wrap_5.o,tcp_wrap_5.o,pipe_wrap_5.o,cares_wrap_5.o,
+    stdio_wrap_5.o,process_wrap_5.o,node_cares_5.o,node_net_5.o,
+    node_signal_watcher_5.o,node_stat_watcher_5.o,node_io_watcher_5.o,
+    node_stdio_5.o,node_child_process_5.o,node_timer_5.o,platform_linux_5.o,
+    node_crypto_5.o,http_parser_3.o -&gt; node}
+make: *** [program] Error 1
+</code></pre>
+
+<h2>node0.5.3</h2>
+
+<pre><code>7931.39 fetches/sec, 95176.7 bytes/sec
+msecs/connect: 0.0520728 mean, 0.701 max, 0.024 min
+msecs/first-response: 12.5109 mean, 45.553 max, 5.302 min
+</code></pre>
+
+<h2>node0.5.2</h2>
+
+<pre><code>8126.8 fetches/sec, 97521.6 bytes/sec
+msecs/connect: 0.0513291 mean, 2.476 max, 0.021 min
+msecs/first-response: 12.2076 mean, 38.541 max, 1.328 min
+</code></pre>
+
+<h2>node0.5.1</h2>
+
+<p>编译不通过，暂缺</p>
+
+<h2>node0.5.0</h2>
+
+<p>编译不通过，暂缺</p>
+
+<h2>node0.4.12</h2>
+
+<pre><code>7510 fetches/sec, 90120 bytes/sec
+msecs/connect: 0.0540341 mean, 0.631 max, 0.023 min
+msecs/first-response: 13.2113 mean, 47.364 max, 3.807 min
+</code></pre>
+
+<h2>node0.4.11</h2>
+
+<pre><code>7557.79 fetches/sec, 90693.5 bytes/sec
+msecs/connect: 0.0553164 mean, 0.467 max, 0.025 min
+msecs/first-response: 13.13 mean, 44.789 max, 2.899 min
+</code></pre>
+
+<h2>node0.4.10</h2>
+
+<pre><code>7600 fetches/sec, 91200 bytes/sec
+msecs/connect: 0.0534043 mean, 0.367 max, 0.022 min
+msecs/first-response: 13.0584 mean, 53.123 max, 4.559 min
+</code></pre>
+
+<h2>node0.4.9</h2>
+
+<pre><code>7605.7 fetches/sec, 91268.4 bytes/sec
+msecs/connect: 0.0539834 mean, 0.379 max, 0.02 min
+msecs/first-response: 13.0469 mean, 46.833 max, 5.299 min
+</code></pre>
+
+<h2>node0.4.8</h2>
+
+<pre><code>6587.9 fetches/sec, 79054.8 bytes/sec
+msecs/connect: 0.0512022 mean, 0.499 max, 0.021 min
+msecs/first-response: 15.0846 mean, 49.04 max, 4.448 min
+</code></pre>
+
+<h2>node0.4.7</h2>
+
+<pre><code>7916.1 fetches/sec, 94993.2 bytes/sec
+msecs/connect: 0.0516686 mean, 1.629 max, 0.021 min
+msecs/first-response: 12.5375 mean, 43.116 max, 5.695 min
+</code></pre>
+
+<h2>node0.4.6</h2>
+
+<pre><code>7930.88 fetches/sec, 95170.6 bytes/sec
+msecs/connect: 0.0517224 mean, 0.704 max, 0.022 min
+msecs/first-response: 12.5125 mean, 42.465 max, 5.519 min
+</code></pre>
+
+<h2>node0.4.5</h2>
+
+<pre><code>7960 fetches/sec, 95520 bytes/sec
+msecs/connect: 0.0522368 mean, 0.674 max, 0.021 min
+msecs/first-response: 12.4676 mean, 43.185 max, 5.598 min
+</code></pre>
+
+<h2>node0.4.4</h2>
+
+<pre><code>7981.4 fetches/sec, 95776.8 bytes/sec
+msecs/connect: 0.0511981 mean, 0.729 max, 0.02 min
+msecs/first-response: 12.4255 mean, 51.829 max, 5.506 min
+</code></pre>
+
+<h2>node0.4.3</h2>
+
+<pre><code>7929.9 fetches/sec, 95158.8 bytes/sec
+msecs/connect: 0.0510949 mean, 0.833 max, 0.023 min
+msecs/first-response: 12.5189 mean, 51.677 max, 5.02 min
+</code></pre>
+
+<h2>node0.4.2</h2>
+
+<pre><code>7965.19 fetches/sec, 95582.3 bytes/sec
+msecs/connect: 0.0526699 mean, 0.864 max, 0.023 min
+msecs/first-response: 12.4563 mean, 42.695 max, 3.897 min
+</code></pre>
+
+<h2>node0.4.1</h2>
+
+<pre><code>7975.19 fetches/sec, 95702.3 bytes/sec
+msecs/connect: 0.0527306 mean, 1.418 max, 0.021 min
+msecs/first-response: 12.4361 mean, 47.871 max, 0.767 min
+</code></pre>
+
+<h2>node0.4.0</h2>
+
+<pre><code>7490 fetches/sec, 89880 bytes/sec
+msecs/connect: 0.051049 mean, 0.691 max, 0.021 min
+msecs/first-response: 13.255 mean, 51.421 max, 5.735 min
+</code></pre>
+
+<h2>node0.3.8</h2>
+
+<pre><code>7810 fetches/sec, 93720 bytes/sec
+msecs/connect: 0.0514884 mean, 0.581 max, 0.02 min
+msecs/first-response: 12.7136 mean, 43.613 max, 5.42 min
+</code></pre>
+
+<h2>node0.3.7</h2>
+
+<pre><code>7870.99 fetches/sec, 94451.9 bytes/sec
+msecs/connect: 0.0527374 mean, 0.453 max, 0.022 min
+msecs/first-response: 12.6068 mean, 37.022 max, 5.835 min
+</code></pre>
+
+<h2>node0.3.6</h2>
+
+<pre><code>7814.89 fetches/sec, 93778.6 bytes/sec
+msecs/connect: 0.0522743 mean, 0.719 max, 0.023 min
+msecs/first-response: 12.6983 mean, 37.436 max, 5.748 min
+</code></pre>
+
+<h2>node0.3.5</h2>
+
+<pre><code>8879.97 fetches/sec, 106560 bytes/sec
+msecs/connect: 0.0571404 mean, 0.753 max, 0.022 min
+msecs/first-response: 11.1496 mean, 46.028 max, 4.842 min
+</code></pre>
+
+<h2>node0.3.4</h2>
+
+<pre><code>9000 fetches/sec, 108000 bytes/sec
+msecs/connect: 0.0566353 mean, 0.633 max, 0.023 min
+msecs/first-response: 11.0017 mean, 46.633 max, 5.126 min
+</code></pre>
+
+<h2>node0.3.3</h2>
+
+<pre><code>8999.29 fetches/sec, 107992 bytes/sec
+msecs/connect: 0.0569282 mean, 0.583 max, 0.022 min
+msecs/first-response: 11.0035 mean, 43.218 max, 5.112 min
+</code></pre>
+
+<h2>node0.3.2</h2>
+
+<pre><code>9200 fetches/sec, 110400 bytes/sec
+msecs/connect: 0.0582272 mean, 0.709 max, 0.023 min
+msecs/first-response: 10.7557 mean, 32.685 max, 5.059 min
+</code></pre>
+
+<h2>node0.3.1</h2>
+
+<pre><code>9347.3 fetches/sec, 112168 bytes/sec
+msecs/connect: 0.0564677 mean, 0.974 max, 0.022 min
+msecs/first-response: 10.592 mean, 38.921 max, 4.77 min
+</code></pre>
+
+<h2>node0.3.0</h2>
+
+<p>编译不通过</p>
+
+<h2>node0.2.6</h2>
+
+<pre><code>7524.9 fetches/sec, 90298.7 bytes/sec
+msecs/connect: 0.0581787 mean, 0.649 max, 0.02 min
+msecs/first-response: 13.1609 mean, 105.413 max, 5.191 min
+</code></pre>
+
+<h2>node0.2.5</h2>
+
+<pre><code>7480.6 fetches/sec, 89767.1 bytes/sec
+msecs/connect: 0.0589546 mean, 0.693 max, 0.023 min
+msecs/first-response: 13.2442 mean, 94.122 max, 5.744 min
+</code></pre>
+
+<h2>node0.2.4</h2>
+
+<pre><code>7488.59 fetches/sec, 89863.1 bytes/sec
+msecs/connect: 0.0595586 mean, 0.428 max, 0.023 min
+msecs/first-response: 13.2342 mean, 95.229 max, 5.88 min
+</code></pre>
+
+<h2>node0.2.3</h2>
+
+<pre><code>7500 fetches/sec, 89999.9 bytes/sec
+msecs/connect: 0.0591254 mean, 0.57 max, 0.024 min
+msecs/first-response: 13.1974 mean, 94.721 max, 5.728 min
+</code></pre>
+
+<h2>node0.2.2</h2>
+
+<pre><code>7409.99 fetches/sec, 88919.9 bytes/sec
+msecs/connect: 0.0597531 mean, 0.558 max, 0.021 min
+msecs/first-response: 13.3618 mean, 102.09 max, 5.846 min
+</code></pre>
+
+<h2>node0.2.1</h2>
+
+<pre><code>7135.9 fetches/sec, 85630.8 bytes/sec
+msecs/connect: 0.0565066 mean, 0.59 max, 0.023 min
+msecs/first-response: 13.8999 mean, 100.855 max, 5.703 min
+</code></pre>
+
+<h2>node0.2.0</h2>
+
+<pre><code>7129.99 fetches/sec, 85559.9 bytes/sec
+msecs/connect: 0.0565618 mean, 0.356 max, 0.02 min
+msecs/first-response: 13.915 mean, 100.048 max, 4.344 min
+</code></pre>
+
+<h2>node0.1.104</h2>
+
+<pre><code>7640 fetches/sec, 91679.9 bytes/sec
+msecs/connect: 0.0577092 mean, 0.564 max, 0.024 min
+msecs/first-response: 12.9695 mean, 90.161 max, 3.711 min
+</code></pre>
+
+<h2>node0.1.103</h2>
+
+<pre><code>7538.38 fetches/sec, 90460.6 bytes/sec
+msecs/connect: 0.0577052 mean, 1.091 max, 0.021 min
+msecs/first-response: 13.1506 mean, 92.522 max, 5.378 min
+</code></pre>
+
+<h2>node0.1.102</h2>
+
+<pre><code>7537.49 fetches/sec, 90449.9 bytes/sec
+msecs/connect: 0.0583015 mean, 0.396 max, 0.024 min
+msecs/first-response: 13.1514 mean, 103.188 max, 5.577 min
+</code></pre>
+
+<h2>node0.1.101</h2>
+
+<pre><code>7673.9 fetches/sec, 92086.8 bytes/sec
+msecs/connect: 0.0588679 mean, 0.767 max, 0.021 min
+msecs/first-response: 12.9082 mean, 99.924 max, 4.776 min
+</code></pre>
+
+<h2>node0.1.100</h2>
+
+<pre><code>7040 fetches/sec, 84480 bytes/sec
+msecs/connect: 0.0557378 mean, 0.592 max, 0.022 min
+msecs/first-response: 14.0982 mean, 107.368 max, 6.009 min
+</code></pre>
+
+<h2>node0.1.99</h2>
+
+<pre><code>7279.99 fetches/sec, 87359.9 bytes/sec
+msecs/connect: 0.0555776 mean, 0.569 max, 0.022 min
+msecs/first-response: 13.6292 mean, 93.241 max, 5.983 min
+</code></pre>
+
+<h2>node0.1.98</h2>
+
+<pre><code>7210.6 fetches/sec, 86527.2 bytes/sec
+msecs/connect: 0.0552844 mean, 0.379 max, 0.02 min
+msecs/first-response: 13.7576 mean, 94.502 max, 5.685 min
+</code></pre>
+
+<h2>node0.1.97</h2>
+
+<pre><code>7339.55 fetches/sec, 88074.6 bytes/sec
+msecs/connect: 0.057371 mean, 0.802 max, 0.022 min
+msecs/first-response: 13.5052 mean, 89.268 max, 5.326 min
+</code></pre>
+
+<h2>node0.1.96</h2>
+
+<pre><code>7269.6 fetches/sec, 87235.2 bytes/sec
+msecs/connect: 0.0566584 mean, 0.573 max, 0.021 min
+msecs/first-response: 13.6483 mean, 60.543 max, 4.296 min
+</code></pre>
+
+<h2>node0.1.95</h2>
+
+<pre><code>7209.65 fetches/sec, 86515.9 bytes/sec
+msecs/connect: 0.0565087 mean, 0.529 max, 0.024 min
+msecs/first-response: 13.7617 mean, 60.438 max, 4.418 min
+</code></pre>
+
+<h2>node0.1.94</h2>
+
+<pre><code>7063.39 fetches/sec, 84760.6 bytes/sec
+msecs/connect: 0.0547156 mean, 0.66 max, 0.022 min
+msecs/first-response: 14.0522 mean, 130.751 max, 4.987 min
+</code></pre>
+
+<h2>node0.1.93</h2>
+
+<pre><code>7930.6 fetches/sec, 95167.2 bytes/sec
+msecs/connect: 0.0587932 mean, 0.61 max, 0.023 min
+msecs/first-response: 12.4891 mean, 77.833 max, 3.689 min
+</code></pre>
+
+<h2>node0.1.92</h2>
+
+<pre><code>8019.99 fetches/sec, 96239.9 bytes/sec
+msecs/connect: 0.058158 mean, 0.718 max, 0.021 min
+msecs/first-response: 12.354 mean, 79.033 max, 3.423 min
+</code></pre>
+
+<h2>node0.1.91</h2>
+
+<pre><code>8560.98 fetches/sec, 102732 bytes/sec
+msecs/connect: 0.0596777 mean, 0.471 max, 0.022 min
+msecs/first-response: 11.522 mean, 71.727 max, 3.235 min
+</code></pre>
+
+<h2>node0.1.90</h2>
+
+<pre><code>8146.18 fetches/sec, 97754.2 bytes/sec
+msecs/connect: 0.0595273 mean, 0.826 max, 0.021 min
+msecs/first-response: 12.1531 mean, 223.064 max, 3.189 min
+</code></pre>
+
+<h2>node0.1.0</h2>
+
+<p>helloworld.js跑不起来了，出现一下异常：</p>
+
+<pre><code>hello.js:8: TypeError: Object #&lt;an Object&gt; has no method 'createServer'
+http.createServer(function (req, res) {
+     ^
+</code></pre>
+
+<h2>有爱</h2>
+
+<p>^_^ 希望本文对你有用</p>
+
+<h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'fengmk2github'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> <!-- #content -->
+
+<div id="footer">
+</div> <!-- #footer -->
+
+</div> <!-- #wrapper -->
+
+<a href="https://github.com/fengmk2/mk2blog" id="fork">
+    <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+</a>
+
+<!-- Specific to this page -->
+<script>
+$(function() {
+  // Deck initialization
+  $('pre code').parent().addClass('prettyprint');
+  prettyPrint();
+});
+</script>
+</body>
+</html>
