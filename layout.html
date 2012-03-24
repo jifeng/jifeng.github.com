@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="MK2's blog，生命是一场幻觉，代码是一段人生。"/>
+  <link rel="stylesheet" href="/css/typo.css" />
+  <link rel="stylesheet" href="/css/prettify.css">
+  <script src="/js/jquery-1.7.min.js"></script>
+  <script src="/js/prettify.js"></script>
+  <title>#title#</title>
+  <style>
+     body {
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+     }
+     a{color:#09f;}
+     code{color:#080;}
+     h1, #tagline{display:inline;}
+     #wrapper{padding:5% 8%;min-width:480px;}
+     #tagline{font:0.8em serif;color:#888;display:inline-block;margin:0.1em 0 1.2em;}
+     #fork{position:fixed;top:0;right:0;_position:absolute;}
+  </style>
+</head>
+<body>
+
+<div id="wrapper" class="typo">
+
+<div id="header">
+</div> <!-- #header -->
+
+<div id="content">
+#content#
+</div> <!-- #content -->
+
+<div id="footer">
+</div> <!-- #footer -->
+
+</div> <!-- #wrapper -->
+
+<a href="https://github.com/fengmk2/mk2blog" id="fork">
+    <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+</a>
+
+<!-- Specific to this page -->
+<script>
+$(function() {
+  // Deck initialization
+  $('pre code').parent().addClass('prettyprint');
+  prettyPrint();
+});
+</script>
+
+<script type="text/javascript">
+(function() {
+  var c = document.createElement('script'); c.type = 'text/javascript'; c.async = true;
+  c.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'www.clicki.cn/boot/44957';
+  var h = document.getElementsByTagName('head')[0]; h.appendChild(c);
+})();
+</script>
+</body>
+</html>
