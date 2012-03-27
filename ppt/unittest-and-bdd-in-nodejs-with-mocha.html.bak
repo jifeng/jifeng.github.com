@@ -50,11 +50,12 @@
 </section>
 
 <section class="slide">
-<h2>编码规范</h2>
+<h2>为什么要单元测试</h2>
 
 <h3>明显没错的代码</h3>
 
 <p><a href="https://github.com/visionmedia/connect-redis/blob/master/lib/connect-redis.js#L80">connect-redis.js#L80</a></p>
+
 
 <pre><code>  RedisStore.prototype.get = function(sid, fn){
     sid = this.prefix + sid;
