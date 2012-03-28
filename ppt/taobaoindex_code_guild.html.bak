@@ -53,70 +53,53 @@
 
 <section class="slide">
 <h2>编码规范</h2>
-
-
-
-<h3>明显没错的代码</h3>
-
-<p><a href="https://github.com/visionmedia/connect-redis/blob/master/lib/connect-redis.js#L80">connect-redis.js#L80</a></p>
-
-<pre><code>  RedisStore.prototype.get = function(sid, fn){
-    sid = this.prefix + sid;
-    this.client.get(sid, function(err, data){
-      try {
-        if (!data) return fn();
-        fn(null, JSON.parse(data.toString()));
-      } catch (err) {
-        fn(err);
-      } 
-    });
-  };
-</code></pre>
-
+<p><img src="http://ww3.sinaimg.cn/large/7013266egw1dreu8elroaj.jpg" alt="code style" title="" /></p>
+<p><a href="https://github.com/windyrobin/iFrame/blob/master/style.md">Javascript编码规范</a></p>
+<p><a href="https://github.com/windyrobin/iFrame/blob/master/pp.md">Javascript 陷阱/性能优化/习惯用法</a></p>
 </section>
 
 <section class="slide">
-<h2>没明显错的代码</h2>
+<h2>代码审核——提交流程</h2>
 
-<p><a href="https://github.com/felixge/node-mysql/blob/ecbb9f95d05348713e792e331412fa233095f798/lib/query.js#L65">node-mysql/lib/query.js#L65</a></p>
+<h3>1. 变更代码必须要被审查后才能提交</h3>
 
-<pre><code>if (buffer) {
-  row[field.name] += buffer.toString('utf-8');
-} else {
-  row[field.name] = null;
-}
-</code></pre>
+<h3>2. 开发者发布审查请求时需要填写代码变更<br>
+    的描述和原因，如果有测试结果，也必须要填写 </h3>
 
+<h3>3. 只有审查人确认"Ship it"后，<br>开发者才能提交代码 </h3>
+
+<h3>4. Commit log 必须包含代码变更描述和代码审查URL (svn)</h3>
+
+<p><a href="http://baike.corp.taobao.com/index.php/Code-review-edp">具体使用说明</a></p>
 </section>
 
 <section class="slide">
-<h2>明显有错的代码</h2>
+<h2>代码审核——审查内容</h2>
+<h3>1.  编码规范</h3>
+<h3>2.  是否符合描述说明</h3>
+<h3>3.  变更代码必须有对应的单元测试覆盖到</h3>
+<p>* 输入参数覆盖</p>
+<p>*  正常逻辑覆盖 </p>
+<p>*  异常逻辑覆盖 </p>
+<h3>4. 程序逻辑 </h3>
 
-<p><a href="https://github.com/joyent/node/blob/9a059ea69e1f6ebd8899246682d8ca257610b8ab/lib/http.js#L961">node0.6.6 - lib/http.js</a></p>
-
-<pre><code>Agent.prototype.removeSocket = function(s, name, host, port) {
-  if (this.sockets[name]) {
-    var index = this.sockets[name].indexOf(s);
-    if (index !== -1) {
-      this.sockets[name].splice(index, 1);
-    }
-  } else if (this.sockets[name] && this.sockets[name].length === 0) {
-    // don't leak
-    delete this.sockets[name];
-    delete this.requests[name];
-  }
-  if (this.requests[name] && this.requests[name].length) {
-    // If we have pending requests and a socket gets closed a new one
-    // needs to be created to take over in the pool for the one that closed.
-    this.createSocket(name, host, port).emit('free');
-  }
-};
-</code></pre>
-
+<p><a href="http://baike.corp.taobao.com/index.php/Code-review-edp">具体使用说明</a></p>
 </section>
 
+
 <section class="slide">
-<h2>为什么要单元测试</h2>
+<h2>代码审核——作用</h2>
+<h3>1.  对开发者：</h3>
+<p>* 保证代码规范</p>
+<p>* 查漏补缺 </p>
+<p>* 提高代码质量</p>
+<h3>2.  对审核者：</h3>
+<p>* 把控程序的功能点</p>
+<p>* 学习别人代码的优点</p>
+
+</section>
+<section class="slide">
+<h2>单元测试——作用</h2>
 
 <h3>代码质量</h3>
 
@@ -133,49 +116,136 @@
 <h3>增强自信心</h3>
 
 <p>全是绿灯！<br />单元测试全部跑通！</p>
+<h3>鹦鹉螺</h3>
+
+<p>去QA</p>
+
+</section>
 
 </section>
 
 <section class="slide">
-<h2>眼花缭乱的Nodejs测试模块</h2>
+<h2>单元测试——工具</h2>
+<h3>mocha + should + jscoverage</h3>
 
-<p><img src="http://ww1.sinaimg.cn/large/6cfc7910jw1doil8n1kq0j.jpg" alt="unit test in npm" title="" /></p>
-
-</section>
-
-<section class="slide">
-<h2><a href="https://github.com/joyent/node/wiki/modules#wiki-testing">Testing / Spec Frameworks</a></h2>
-
+<h3>好的示例</h3>
 <ul>
-<li><a href="https://github.com/caolan/nodeunit">nodeunit</a> TDD</li>
-<li><a href="https://github.com/visionmedia/expresso">Expresso</a> TDD (Be sure to check out Expresso's successor Mocha.)</li>
-<li><a href="https://github.com/cloudhead/vows">Vows</a> BDD</li>
-<li><a href="https://github.com/visionmedia/mocha">Mocha</a> BDD</li>
-<li><a href="https://github.com/visionmedia/should.js">should</a> BDD</li>
+<li><a href="https://github.com/visionmedia/express/tree/master/test">Express</a></li>
+<li><a href="https://github.com/senchalabs/connect/tree/master/test">Connect</a></li>
+<li><a href="https://github.com/visionmedia/superagent/tree/master/test/node">SuperAgent</a></li>
+<li><a href="https://github.com/LearnBoost/websocket.io/tree/master/test">WebSocket.io</a></li>
+<li><a href="https://github.com/visionmedia/mocha/tree/master/test">Mocha</a></li>
 </ul>
-
-<p>BDD: behaviour-driven development</p>
-
 </section>
 
 <section class="slide">
-<h2>如何选择</h2>
+<h2>单元测试</h2>
+<h3>项目结构</h3>
+<p><img src="http://ww4.sinaimg.cn/large/7013266egw1dreut6owo2j.jpg" alt="program Features" title="" /></p>
 
 <ul>
-<li>示例完整，上手容易，特别是本身就带有很好的示例</li>
-<li>文档完善</li>
-<li>在许多项目中被使用</li>
-<li>准确友好的测试报告</li>
-<li>持续改进</li>
+<li>ensure_require: 用于jsconverage时，省掉每个文件的埋点</li>
+<li>http：非常方便地测试 http 请求</li>
+<li>mock：模拟请求得到的数据，用户处理数据异常</li>
 </ul>
 
 </section>
 
 <section class="slide">
-<h2>Mocha ，我喜欢</h2>
+<h2>单元测试</h2>
+<h3>Makefile</h3>
+<pre><code>NAME = taobaoindex
+SRC = $(shell find lib -type f -name "*.js")
+TESTS = test/*.js
+TESTTIMEOUT = 15000
+REPORTER = tap
+VERSION = $(shell date +%Y%m%d%H%M%S)
+SVNURL = $(shell svn info | grep URL | awk '{print $$2}')
 
-<p><img src="http://ww2.sinaimg.cn/large/6cfc7910jw1doimelmi7hj.jpg" alt="Mocha's Features" title="" /></p>
+test: compile
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
+		--reporter $(REPORTER) --timeout $(TESTTIMEOUT) $(TESTS)
+test-cov:
+	@JSCOV=1 $(MAKE) test REPORTER=html-cov > coverage.html
 
+test-cov-json:
+	@JSCOV=1 $(MAKE) test REPORTER=json-cov
+	......
+</code></pre>
+
+</section>
+
+<section class="slide">
+<h2>单元测试——小技巧</h2>
+<h3>模拟请求得到的数据</h3>
+<pre><code> 
+var searchApp = require('../controllers/search');
+var app = require('../app').create();
+var should = require('should');  
+  before(function(done) {
+    app.listen(0, done);
+  });
+    describe('/cpv_items', function() {
+    var urls = [
+      '/cpv_items/50010850/20511,28386;20664,28105;2917619,8496965?query=%E8%BF%9E%E8%A1%A3%E8%A3%99&cid=50010850&hot=63426&title=%E8%95%BE%E4%B8%9D%20%E8%95%BE%E4%B8%9D%E8%8A%B1%E8%BE%B9%20%E9%9F%A9%E7%89%88&datatype=cpv',
+      '/cpv_items/50019272/20000,47342;3775809,20144;7221242,4526599?query=%E7%99%BB%E5%B1%B1%E9%9E%8B&cid=50019272&hot=13451&title=%E7%94%B7%E5%A3%AB%20Camel%2F%E9%AA%86%E9%A9%BC%20%E8%80%90%E7%A3%A8&datatype=cpv',
+    ];
+    urls.forEach(function(url) {
+      it(url.substring(0, 30) + '... should return json format', function(done) {
+        app.request().get(url).end(function(res) {
+          res.should.have.status(200);
+          res.should.have.header('content-type', 'application/json; charset=utf-8');
+          var items = JSON.parse(res.body);
+          items.should.be.an.instanceof(Array);
+          items.length.should.above(0);
+          for (var j = 0, jl = items.length; j < jl; j++) {
+            checkImageItem(items[j]);
+          }
+          done();
+        });
+      })
+    });
+    
+  });
+	......
+</code></pre>
+<p><a href="http://svn.simba.taobao.com/svn/EDP/taobaoindex/taobaoindex/trunk/test/support/http.js">http模拟代码</a></p>
+</section>
+
+<section class="slide">
+<h2>单元测试——小技巧</h2>
+<h3>模拟http请求</h3>
+<pre><code> 
+function mockDataRenderError() {
+  var _request = urllib.request;
+  before(function() {
+    urllib.request = function() {
+      var cb = arguments[arguments.length - 1];
+      process.nextTick(function() {
+        cb(null, new Buffer('{"v": "3.0","c": 200,"m": "数据渲染错误","t": 0,"n": 0,"fn": 0}'));
+      });
+    };
+  });
+  after(function() {
+    urllib.request = _request;
+  });
+  return function(err, data, done) {
+    should.exist(err);
+    err.should.be.an.instanceof(Error);
+    err.message.should.equal('数据渲染错误');
+    err.data.should.equal('{"v": "3.0","c": 200,"m": "数据渲染错误","t": 0,"n": 0,"fn": 0}');
+    should.not.exist(data);
+    done();
+  };
+}
+	......
+</code></pre>
+
+</section>
+<section class="slide">
+<h2>单元测试</h2>
+<p><img src="http://ww4.sinaimg.cn/large/7013266egw1drev57wf27j.jpg" alt="result" title="" /></p>
+<p>看见单元测试全部跑过是件很爽的事情</p>
 </section>
 
 <section class="slide">
