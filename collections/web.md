@@ -10,3 +10,5 @@
 * [How Browsers Work: Behind the Scenes of Modern Web Browsers](http://www.html5rocks.com/en/tutorials/internals/howbrowserswork/), [浏览器是如何工作的？（工作原理）](http://www.iefans.net/liulanqi-ruhe-gongzuo-yuanli/)
 * [Curl网站开发指南](http://www.ruanyifeng.com/blog/2011/09/curl.html)
 * [HTML Special Characters](http://tntluoma.com/sidebars/codes/): http://tntluoma.com/files/codes.htm
+* [解放你的游览器](http://fed.renren.com/archives/247)
+* [Google Chrome源码剖析](http://www.ha97.com/2903.html)
