@@ -96,82 +96,102 @@ for (var i = 0; i < length; i++)   and  while
 <section class="slide">
 <h2>callback</h2>
 <pre><code>
-  db.get(key, function(err, data) {
-    if (err) {
-      return callback(err);
-    }
+  function asyncfun(data, callback) {
     try {
       callback(null, JSON.parse(data.toString()));
-    } catch(e) {
+    } catch (e) {
       callback(e);
     }
-  });
+  }
 </code></pre>
 
+<pre><code>
+  var json = {'a': 'b'};
+  var jsonstr = JSON.stringify(json);
+  var d = new Buffer(jsonstr);
+
+  asyncfun(d, function(err, data) {
+    console.log(err);
+    throw new Error('new Error');
+  });
+</code></pre>
+<h3>执行结果</h3>
+<pre><code>
+  null
+  [Error: new Error]
+</code></pre>
 </section>
 <section class="slide">
 <h2>buffer</h2>
 <pre><code>
-  get(params, function(err, data) {
-    if (err) {
-      callback(err);
-   }
-    //对data进行操作
-    var row = data[0];
+  var data = "";  
+  res.on('data', function (chunk) {  
+    data += chunk;  
+  })  
+  .on("end", function () {  
+
   });
 </code></pre>
-
-</section>
-
 </section>
 
 <section class="slide">
-<h2>单元测试——工具</h2>
-<h3>mocha + should + jscoverage</h3>
-
-<h3>好的示例</h3>
-<ul>
-<li><a href="https://github.com/visionmedia/express/tree/master/test">Express</a></li>
-<li><a href="https://github.com/senchalabs/connect/tree/master/test">Connect</a></li>
-<li><a href="https://github.com/visionmedia/superagent/tree/master/test/node">SuperAgent</a></li>
-<li><a href="https://github.com/LearnBoost/websocket.io/tree/master/test">WebSocket.io</a></li>
-<li><a href="https://github.com/visionmedia/mocha/tree/master/test">Mocha</a></li>
-</ul>
+<h2>buffer</h2>
+<h3>优化(1)</h3>
+<pre><code>
+  var chunks = [];  
+  var size = 0;  
+  res.on('data', function (chunk) {  
+    chunks.push(chunk);  
+    size += chunk.length;  
+  });  
+  res.on('end', function () {  
+    data = new Buffer(size);  
+    for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {  
+      var chunk = chunks[i];  
+      chunk.copy(data, pos);  
+      pos += chunk.length;  
+    }  
+  }); 
+</code></pre>
 </section>
 
 <section class="slide">
-<h2>单元测试</h2>
-<h3>项目结构</h3>
-<p><img src="http://ww4.sinaimg.cn/large/7013266egw1dreut6owo2j.jpg" alt="program Features" title="" /></p>
-
-<ul>
-<li>ensure_require: 用于jsconverage时，省掉每个文件的埋点</li>
-<li>http：非常方便地测试 http 请求</li>
-<li>mock：模拟请求得到的数据，用户处理数据异常</li>
-</ul>
-
+<h2>buffer</h2>
+<h3>优化(2)</h3>
+<pre><code>
+  res.on('end', function () {  
+  var data = null;  
+  switch(chunks.length) {  
+    case 0: data = new Buffer(0);  
+      break;  
+    case 1: data = chunks[0];  
+      break;  
+    default:  
+      data = new Buffer(size);  
+      for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {  
+        var chunk = chunks[i];  
+        chunk.copy(data, pos);  
+        pos += chunk.length;  
+      }  
+      break;  
+  }  
+}); 
+</code></pre>
 </section>
 
 <section class="slide">
-<h2>单元测试</h2>
-<h3>Makefile</h3>
-<pre><code>NAME = taobaoindex
-SRC = $(shell find lib -type f -name "*.js")
-TESTS = test/*.js
-TESTTIMEOUT = 15000
-REPORTER = tap
-VERSION = $(shell date +%Y%m%d%H%M%S)
-SVNURL = $(shell svn info | grep URL | awk '{print $$2}')
-
-test: compile
-	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
-		--reporter $(REPORTER) --timeout $(TESTTIMEOUT) $(TESTS)
-test-cov:
-	@JSCOV=1 $(MAKE) test REPORTER=html-cov > coverage.html
-
-test-cov-json:
-	@JSCOV=1 $(MAKE) test REPORTER=json-cov
-	......
+<h2>深度嵌套</h2>
+<h3>典型代码</h3>
+<pre><code>N
+  func1(err, function(err1, data1) {
+    func2(err1, function(err2, data2) {
+      func3(err3, function(err3, data3) {
+        func4(err4, function(err4, data4) {
+          .......
+        })
+      })
+    })
+  })
 </code></pre>
 
 </section>
