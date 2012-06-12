@@ -182,7 +182,7 @@ for (var i = 0; i < length; i++)   and  while
 <section class="slide">
 <h2>深度嵌套</h2>
 <h3>典型代码</h3>
-<pre><code>N
+<pre><code>
   func1(err, function(err1, data1) {
     func2(err1, function(err2, data2) {
       func3(err3, function(err3, data3) {
@@ -197,82 +197,62 @@ for (var i = 0; i < length; i++)   and  while
 </section>
 
 <section class="slide">
-<h2>单元测试——小技巧</h2>
-<h3>模拟请求得到的数据</h3>
+<h2>HTTP Request</h2>
 <pre><code> 
-var searchApp = require('../controllers/search');
-var app = require('../app').create();
-var should = require('should');  
-  before(function(done) {
-    app.listen(0, done);
-  });
-    describe('/cpv_items', function() {
-    var urls = [
-      '/cpv_items/50010850/20511,28386;20664,28105;2917619,8496965?query=%E8%BF%9E%E8%A1%A3%E8%A3%99&cid=50010850&hot=63426&title=%E8%95%BE%E4%B8%9D%20%E8%95%BE%E4%B8%9D%E8%8A%B1%E8%BE%B9%20%E9%9F%A9%E7%89%88&datatype=cpv',
-      '/cpv_items/50019272/20000,47342;3775809,20144;7221242,4526599?query=%E7%99%BB%E5%B1%B1%E9%9E%8B&cid=50019272&hot=13451&title=%E7%94%B7%E5%A3%AB%20Camel%2F%E9%AA%86%E9%A9%BC%20%E8%80%90%E7%A3%A8&datatype=cpv',
-    ];
-    urls.forEach(function(url) {
-      it(url.substring(0, 30) + '... should return json format', function(done) {
-        app.request().get(url).end(function(res) {
-          res.should.have.status(200);
-          res.should.have.header('content-type', 'application/json; charset=utf-8');
-          var items = JSON.parse(res.body);
-          items.should.be.an.instanceof(Array);
-          items.length.should.above(0);
-          for (var j = 0, jl = items.length; j < jl; j++) {
-            checkImageItem(items[j]);
-          }
-          done();
-        });
-      })
-    });
-    
-  });
-	......
-</code></pre>
-<p><a href="http://svn.simba.taobao.com/svn/EDP/taobaoindex/taobaoindex/trunk/test/support/http.js">http模拟代码</a></p>
-</section>
-
-<section class="slide">
-<h2>单元测试——小技巧</h2>
-<h3>模拟http请求</h3>
-<pre><code> 
-function mockDataRenderError() {
-  var _request = urllib.request;
-  before(function() {
-    urllib.request = function() {
-      var cb = arguments[arguments.length - 1];
-      process.nextTick(function() {
-        cb(null, new Buffer('{"v": "3.0","c": 200,"m": "数据渲染错误","t": 0,"n": 0,"fn": 0}'));
-      });
-    };
-  });
-  after(function() {
-    urllib.request = _request;
-  });
-  return function(err, data, done) {
-    should.exist(err);
-    err.should.be.an.instanceof(Error);
-    err.message.should.equal('数据渲染错误');
-    err.data.should.equal('{"v": "3.0","c": 200,"m": "数据渲染错误","t": 0,"n": 0,"fn": 0}');
-    should.not.exist(data);
-    done();
+  var options = {
+    host: 'www.google.com',
+    port: 80,
+    path: '/',
   };
-}
-	......
+  http.get(options, function(res) {
+    JSON.stringify(res.headers));
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+    });
+  });
 </code></pre>
-
+<p>
+<ul>
+<li>设置超时时间</li>
+<li>Content-Length, 特别是前面存在nginx</li>
+</ul>
 </section>
+
 <section class="slide">
-<h2>单元测试</h2>
-<p><img src="http://ww4.sinaimg.cn/large/7013266egw1drev57wf27j.jpg" alt="result" title="" /></p>
-<p>看见单元测试全部跑过是件很爽的事情</p>
+<h2>HTTP Response</h2>
+<pre><code> 
+  app.get('/', function () {
+    // to get buffer1 and buffer2;
+    res.write(buffer1);
+    res.write(buffer2);
+    res.end();
+  })
+</code></pre>
+<p>解决方案</p>
+<pre><code>
+  app.get('/', function () {
+    // to get buffer1 and buffer2;
+    var buff = combine(buffer1, buffer2);
+    res.end(buff);
+  })
+</code></pre>
+</section>
+
+<section class="slide">
+<h2>详细资料</h2>
+<ul>
+<li><a href='http://www.cnblogs.com/lengyuhong/archive/2012/05/31/2527016.html'>那些年，在nodejs上踩过的坑（一）</a></li>
+<li><a href='http://fengmk2.github.com/blog/2011/08/nodejs_http_request_timeout.html'>Nodejs HTTP请求的超时处理
+</a></li>
+<li><a href='https://github.com/windyrobin/iFrame/blob/master/pp.md'>Node 陷阱与优化
+</a></li>
+</ul>
 </section>
 
 
 <section class="slide">
 <h1> Thank you</h1></section>
-
 
 <p class="deck-status">
   <span class="deck-status-current"></span>
