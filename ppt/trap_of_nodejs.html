@@ -35,7 +35,7 @@
 
 
 <section class="slide">
-  <h1> 那些年，在nodejs上踩过的坑</h1>
+  <h1> 那些年 <br> 在nodejs上踩过的坑</h1>
 </section>
 
 <section class="slide">
@@ -43,7 +43,7 @@
 
 <ul>
 <li>循环优化</li>
-<li>callback/li>
+<li>callback</li>
 <li>buffer</li>
 <li>深度嵌套</li>
 <li>HTTP Request</li>
@@ -64,66 +64,62 @@ for (var i = 0; i < length; i++)   and  while
 </section>
 
 <section class="slide">
-<h2>代码审核——提交流程</h2>
+<h2>for</h2>
 
-<h3>1. 变更代码必须要被审查后才能提交</h3>
+<pre><code> 
+  for (var i = 0; i < data.length; i++) {
+    //do something
+  }
 
-<h3>2. 开发者发布审查请求时需要填写代码变更<br>
-    的描述和原因，如果有测试结果，也必须要填写 </h3>
-
-<h3>3. 只有审查人确认"Ship it"后，<br>开发者才能提交代码 </h3>
-
-<h3>4. Commit log 必须包含代码变更描述和代码审查URL (svn)</h3>
-
-<p><a href="http://baike.corp.taobao.com/index.php/Code-review-edp">具体使用说明</a></p>
+</code></pre>
+<br>
+<pre><code>
+  for (var i = 0, l = data.length; i < l; i++) {
+    //do something
+  }
+</code></pre>
 </section>
 
 <section class="slide">
-<h2>代码审核——审查内容</h2>
-<h3>1.  编码规范</h3>
-<h3>2.  是否符合描述说明</h3>
-<h3>3.  变更代码必须有对应的单元测试覆盖到</h3>
-<p>* 输入参数覆盖</p>
-<p>*  正常逻辑覆盖 </p>
-<p>*  异常逻辑覆盖 </p>
-<h3>4. 程序逻辑 </h3>
-
-<p><a href="http://baike.corp.taobao.com/index.php/Code-review-edp">具体使用说明</a></p>
+<h2>callback</h2>
+<pre><code>
+  get(params, function(err, data) {
+    if (err) {
+      callback(err);
+   }
+    //对data进行操作
+    var row = data[0];
+  });
+</code></pre>
 </section>
 
-
 <section class="slide">
-<h2>代码审核——作用</h2>
-<h3>1.  对开发者：</h3>
-<p>* 保证代码规范</p>
-<p>* 查漏补缺 </p>
-<p>* 提高代码质量</p>
-<h3>2.  对审核者：</h3>
-<p>* 把控程序的功能点</p>
-<p>* 学习别人代码的优点</p>
+<h2>callback</h2>
+<pre><code>
+  db.get(key, function(err, data) {
+    if (err) {
+      return callback(err);
+    }
+    try {
+      callback(null, JSON.parse(data.toString()));
+    } catch(e) {
+      callback(e);
+    }
+  });
+</code></pre>
 
 </section>
 <section class="slide">
-<h2>单元测试——作用</h2>
-
-<h3>代码质量</h3>
-
-<p>代码质量如何度量？<br />如果没有测试你如何保证你的代码质量？</p>
-
-<h3>敏捷快速地适应需求</h3>
-
-<p>单元测试是否也能让产品经理看得懂？<br />单元测试是否也能成功一个产品需求的Case？</p>
-
-<h3>重构</h3>
-
-<p>你有足够信心在没有单元测试的情况下发布你的重构代码吗？<br />如何检测你重构的代码符合需要？</p>
-
-<h3>增强自信心</h3>
-
-<p>全是绿灯！<br />单元测试全部跑通！</p>
-<h3>鹦鹉螺</h3>
-
-<p>去QA</p>
+<h2>buffer</h2>
+<pre><code>
+  get(params, function(err, data) {
+    if (err) {
+      callback(err);
+   }
+    //对data进行操作
+    var row = data[0];
+  });
+</code></pre>
 
 </section>
 
