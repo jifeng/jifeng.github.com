@@ -36,6 +36,8 @@
 
 <section class="slide">
   <h1> 那些年 <br> 在nodejs上踩过的坑</h1>
+  <h2>继风(朱佳墩) @<a href='http://weibo.com/lengyuhong'>继风Jordan</a></h2>
+  <p>@2012-6-12 @night of node</p>
 </section>
 
 <section class="slide">
@@ -145,7 +147,7 @@ for (var i = 0; i < length; i++)   and  while
     size += chunk.length;  
   });  
   res.on('end', function () {  
-    data = new Buffer(size);  
+    var data = new Buffer(size);  
     for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {  
       var chunk = chunks[i];  
       chunk.copy(data, pos);  
