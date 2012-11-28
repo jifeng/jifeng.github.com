@@ -52,31 +52,24 @@
 </section>
 
 <section class="slide">
-<h2>循环性能</h2>
+<h2>浅拷贝</h2>
+<h3>你写过类似的代码吗？这样的代码真的已经实现拷贝了吗</h3>
 <pre><code> 
-forEach()
-<br>
-for (var prop in object)
-<br>
-for (var i = 0; i < length; i++)   and  while
+function copy(from) {
+  var to = {};
+  for (var key in from) {
+    to[key] = from[key];
+  }
+  return to;
+}
 </code></pre>
 </section>
 
 <section class="slide">
-<h2>for</h2>
-
-<pre><code> 
-  for (var i = 0; i < data.length; i++) {
-    //do something
-  }
-
-</code></pre>
-<br>
-<pre><code>
-  for (var i = 0, l = data.length; i < l; i++) {
-    //do something
-  }
-</code></pre>
+<h2>解决方案</h2>
+<h3>JSON</h3>
+<h3>递归clone</h3>
+<h3>clone模块</h3>
 </section>
 
 <section class="slide">
