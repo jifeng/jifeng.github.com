@@ -53,7 +53,7 @@
 
 <section class="slide">
 <h2>浅拷贝</h2>
-<h3>你写过类似的代码吗？这样的代码真的已经实现拷贝了吗</h3>
+<h3>你写过类似的代码吗?</h3>
 <pre><code> 
 function copy(from) {
   var to = {};
@@ -67,22 +67,18 @@ function copy(from) {
 
 <section class="slide">
 <h2>解决方案</h2>
-<h3>JSON</h3>
-<h3>递归clone</h3>
-<h3>clone模块</h3>
+<ul>
+<li>JSON</li>
+<li>递归clone</li>
+<li>clone模块</li>
+</ul>
 </section>
 
 <section class="slide">
-<h2>callback</h2>
-<pre><code>
-  get(params, function(err, data) {
-    if (err) {
-      callback(err);
-   }
-    //对data进行操作
-    var row = data[0];
-  });
-</code></pre>
+<h2>escape</h2>
+<h3>connect中escape的实现</h3>
+<img src="http://photo.weibo.com//wbphotos/large/photo_id/3517448261236877?refer=weibofeed" />
+代码地址：<a href="https://github.com/senchalabs/connect/blob/master/lib/utils.js">https://github.com/senchalabs/connect/blob/master/lib/utils.js </a>
 </section>
 
 <section class="slide">
