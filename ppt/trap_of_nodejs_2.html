@@ -77,7 +77,7 @@ function copy(from) {
 <section class="slide">
 <h2>escape</h2>
 <h3>connect中escape的实现</h3>
-<img src="http://ww4.sinaimg.cn/large/7013266egw1dzb2gnz6cuj.jpg" />
+<h3><img src="http://ww4.sinaimg.cn/large/7013266egw1dzb2gnz6cuj.jpg" /></h3>
 代码地址：<a href="https://github.com/senchalabs/connect/blob/master/lib/utils.js">https://github.com/senchalabs/connect/blob/master/lib/utils.js </a>
 </section>
 
@@ -88,23 +88,18 @@ function copy(from) {
 app.use(function (req, res, next) {
   //do some thing
 });
-
+</code></pre>
 </section>
 <section class="slide">
 <h2>解决方案</h2>
 <ul>
 <li>mock req and res</li>
-<li><a href="https://github.com/visionmedia/supertest">supertest</li>
+<li><a href="https://github.com/visionmedia/supertest">supertest</a></li>
 </ul>
 </section>
 
 <section class="slide">
 <h2>supertest</h2>
-</section>
-
-<section class="slide">
-<h2>buffer</h2>
-<h3>优化(2)</h3>
 <pre><code>
   var app = express();
 
