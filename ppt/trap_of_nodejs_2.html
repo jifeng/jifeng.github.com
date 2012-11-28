@@ -70,174 +70,79 @@ function copy(from) {
 <ul>
 <li>JSON</li>
 <li>递归clone</li>
-<li>clone模块</li>
+<li><a href="https://github.com/pvorb/node-clone">clone模块</a></li>
 </ul>
 </section>
 
 <section class="slide">
 <h2>escape</h2>
 <h3>connect中escape的实现</h3>
-<img src="http://photo.weibo.com//wbphotos/large/photo_id/3517448261236877?refer=weibofeed" />
+<img src="http://ww4.sinaimg.cn/large/7013266egw1dzb2gnz6cuj.jpg" />
 代码地址：<a href="https://github.com/senchalabs/connect/blob/master/lib/utils.js">https://github.com/senchalabs/connect/blob/master/lib/utils.js </a>
 </section>
 
 <section class="slide">
-<h2>callback</h2>
+<h2>测试方法</h2>
+<h3>中间件如何测试</h3>
 <pre><code>
-  function asyncfun(data, callback) {
-    try {
-      callback(null, JSON.parse(data.toString()));
-    } catch (e) {
-      callback(e);
-    }
-  }
-</code></pre>
+app.use(function (req, res, next) {
+  //do some thing
+});
 
-<pre><code>
-  var json = {'a': 'b'};
-  var jsonstr = JSON.stringify(json);
-  var d = new Buffer(jsonstr);
-
-  asyncfun(d, function(err, data) {
-    console.log(err);
-    throw new Error('new Error');
-  });
-</code></pre>
-<h3>执行结果</h3>
-<pre><code>
-  null
-  [Error: new Error]
-</code></pre>
 </section>
 <section class="slide">
-<h2>buffer</h2>
-<pre><code>
-  var data = "";  
-  res.on('data', function (chunk) {  
-    data += chunk;  
-  })  
-  .on("end", function () {  
-
-  });
-</code></pre>
+<h2>解决方案</h2>
+<ul>
+<li>mock req and res</li>
+<li><a href="https://github.com/visionmedia/supertest">supertest</li>
+</ul>
 </section>
 
 <section class="slide">
-<h2>buffer</h2>
-<h3>优化(1)</h3>
-<pre><code>
-  var chunks = [];  
-  var size = 0;  
-  res.on('data', function (chunk) {  
-    chunks.push(chunk);  
-    size += chunk.length;  
-  });  
-  res.on('end', function () {  
-    var data = new Buffer(size);  
-    for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {  
-      var chunk = chunks[i];  
-      chunk.copy(data, pos);  
-      pos += chunk.length;  
-    }  
-  }); 
-</code></pre>
+<h2>supertest</h2>
 </section>
 
 <section class="slide">
 <h2>buffer</h2>
 <h3>优化(2)</h3>
 <pre><code>
-  res.on('end', function () {  
-  var data = null;  
-  switch(chunks.length) {  
-    case 0: data = new Buffer(0);  
-      break;  
-    case 1: data = chunks[0];  
-      break;  
-    default:  
-      data = new Buffer(size);  
-      for (var i = 0, pos = 0, l = chunks.length; i < l; i++) {  
-        var chunk = chunks[i];  
-        chunk.copy(data, pos);  
-        pos += chunk.length;  
-      }  
-      break;  
-  }  
-}); 
-</code></pre>
-</section>
+  var app = express();
 
-<section class="slide">
-<h2>深度嵌套</h2>
-<h3>典型代码</h3>
-<pre><code>
-  func1(err, function(err1, data1) {
-    func2(err1, function(err2, data2) {
-      func3(err3, function(err3, data3) {
-        func4(err4, function(err4, data4) {
-          .......
-        })
-      })
-    })
-  })
-</code></pre>
-
-</section>
-
-<section class="slide">
-<h2>HTTP Request</h2>
-<pre><code> 
-  var options = {
-    host: 'www.google.com',
-    port: 80,
-    path: '/',
-  };
-  http.get(options, function(res) {
-    JSON.stringify(res.headers));
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      console.log('BODY: ' + chunk);
-    });
+  app.get('/user', function(req, res){
+    res.send(201, { name: 'tobi' });
   });
 </code></pre>
-<p>
-<ul>
-<li>设置超时时间</li>
-<li>Content-Length, 特别是前面存在nginx</li>
-</ul>
-</section>
-
-<section class="slide">
-<h2>HTTP Response</h2>
-<pre><code> 
-  app.get('/', function () {
-    // to get buffer1 and buffer2;
-    res.write(buffer1);
-    res.write(buffer2);
-    res.end();
-  })
-</code></pre>
-<p>解决方案</p>
 <pre><code>
-  app.get('/', function () {
-    // to get buffer1 and buffer2;
-    var buff = combine(buffer1, buffer2);
-    res.end(buff);
-  })
+  describe('GET /users', function() {
+    it('respond with json', function(done){
+      request(app)
+      .get('/user')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200, done);
+    });
+  }); 
 </code></pre>
 </section>
 
 <section class="slide">
-<h2>详细资料</h2>
-<ul>
-<li><a href='http://www.cnblogs.com/lengyuhong/archive/2012/05/31/2527016.html'>那些年，在nodejs上踩过的坑（一）</a></li>
-<li><a href='http://fengmk2.github.com/blog/2011/08/nodejs_http_request_timeout.html'>Nodejs HTTP请求的超时处理
-</a></li>
-<li><a href='https://github.com/windyrobin/iFrame/blob/master/pp.md'>Node 陷阱与优化
-</a></li>
-</ul>
+<h1> supertest bug</h1>
+<h3>body只判断一次</h3>
+<pre><code>
+  describe('GET /users', function() {
+    it('respond with json', function(done){
+      request(app)
+      .get('/user')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(/body content 1/)
+      .expect(/body content 2/)
+      .expect(200, done);
+    });
+  }); 
+</code></pre>
+<h3>bug已修复（苏千）</h3>
 </section>
-
 
 <section class="slide">
 <h1> Thank you</h1></section>
