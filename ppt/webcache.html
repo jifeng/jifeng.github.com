@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+
+  <title> Web开发中的缓存 </title>
+  <meta name="description" content="A jQuery library for modern HTML presentations">
+  <meta name="author" content="Caleb Troughton">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+  
+  <!-- Core and extension CSS files -->
+  <link rel="stylesheet" href="../js/deck.js/core/deck.core.css">
+  <link rel="stylesheet" href="../js/deck.js/extensions/goto/deck.goto.css">
+  <link rel="stylesheet" href="../js/deck.js/extensions/menu/deck.menu.css">
+  <link rel="stylesheet" href="../js/deck.js/extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" href="../js/deck.js/extensions/status/deck.status.css">
+  <link rel="stylesheet" href="../js/deck.js/extensions/hash/deck.hash.css">
+  
+  <!-- Theme CSS files (menu swaps these out) -->
+  <link rel="stylesheet" id="style-theme-link" href="../js/deck.js/themes/style/neon.css">
+  <link rel="stylesheet" id="transition-theme-link" href="../js/deck.js/themes/transition/horizontal-slide.css">
+  
+  <!-- Custom CSS just for this page -->
+  <link rel="stylesheet" href="../css/prettify.css">
+  
+  <script src="../js/deck.js/modernizr.custom.js"></script>
+</head>
+
+<body class="deck-container">
+
+
+<section class="slide">
+  <h1>Web开发中的缓存</h1>
+  <h2>继风(朱佳墩)</h2>
+<!--   <p>@2013-4-3 @night of node</p> -->
+</section>
+
+<section class="slide">
+<h2>大纲</h2>
+
+<ul>
+<li>绪论</li>
+<li>游览器缓存</li>
+<li>服务器缓存</li>
+<li>交流</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>绪论</h2>
+<h1>为什么需要使用缓存？</h1>
+</section>
+
+<section class="slide">
+<h2>缓冲作用</h2>
+<h3>减少网络延迟，加快页面打开速度</h3>
+<h3>降低服务器压力</h3>
+<h3>减少网络带宽消耗</h3>
+</section>
+
+<section class="slide">
+<h2>游览器缓存</h2>
+<h3>Expires</h3>
+<pre><code>
+Expires:Fri, 28 Mar 2014 06:58:19 GMT
+</code></pre>
+<h3>注意</h3>
+<ul>
+<li>是格林威治时 间（GMT），而不是本地时间</li>
+<li>使用过期时间属性一定要确认你的Web服务器时间设置正确数据合并</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>游览器缓存</h2>
+<h3>Cache-Control</h3>
+<pre><code>
+Cache-Control:max-age=31536000
+</code></pre>
+<h3>重要参数</h3>
+<ul>
+<li>max-age=[秒] — 执行缓存被认为是最新的最长时间。</li>
+<li>no-cache — 强制每次请求直接发送给源服务器</li>
+<li>must-revalidate — 告诉缓存必须遵循所有你给予副本的新鲜度</li>
+</ul>
+<h3>注意</h3>
+<ul>
+<li>Cache-Control比Expires可以控制的多一些 </li>
+<li>Cache-Control的优先级比Expires高，Cache-Control会重写后者的规则</li>
+</ul>
+</section>
+
+
+<section class="slide">
+<h2>游览器缓存</h2>
+<h3>Last-Modified/If-Modified-Since和<br>ETag/If-None-Match</h3>
+<pre><code>
+ Request Header:
+    If-Modified-Since:Fri, 08 Mar 2013 10:37:22 GMT
+    If-None-Match:-9zum9zhe17n2ds
+  Response Header:
+    Etag:-9zum9zhe17n2ds
+    Last-Modified:Fri, 08 Mar 2013 10:37:22 GMT
+</code></pre>
+<h3>注意</h3>
+<ul>
+<li>ETag/If-None-Match：依然向服务端发请求 </li>
+<li>expire和cache-control不会再发</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>游览器缓存</h2>
+<h3>步入html5时代</h3>
+<ul>
+<li>Manifest</li>
+<li>Localstorage</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>服务器缓存</h2>
+<h3>内存</h3>
+<ul>
+<li>最基本的实现方案：var obj = {};</li>
+<li>优化的模块：lru</li>
+</ul>
+<h3>优点</h3>
+<ul>
+<li>纯内存操作，读写系能高</li>
+<li>可以支持任意该语言的数据结构（buffer）</li>
+<li>部署简单（特别是开发时）
+</li>
+</ul>
+<h3>缺点</h3>
+<ul>
+<li>进程间，服务器间共享比较麻烦 </li>
+<li>维护起来比较麻烦（缓存过期；数据量大时又隐患，gc）</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>服务器缓存</h2>
+<h3>缓存服务器</h3>
+<ul>
+<li>redis(mredis)， memcache</li>
+</ul>
+<h3>优点</h3>
+<ul>
+<li>帮助各个进程间共享缓存数据</li>
+<li>支持大数据量（但redis的内存过大时，性能会直线下降）</li>
+<li>维护相对方便</li>
+</ul>
+<h3>缺点</h3>
+<ul>
+<li>存储复杂架构时，需要序列化/反序列化</li>
+<li>相比较纯内存的缓存，需要网络请求，性能相对会差
+</li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>服务器缓存</h2>
+<h3>服务器缓存的一些注意点
+</h3>
+<ul>
+<li>往往对key取hash值后再存<br>负载均衡，避免key中存在“非法字符”</li>
+<li>序列化<br>buffer数据就存buffer，不要再做数据转化，提高性能
+</li>
+<li>缓存时间</li>
+<li>连接数，超时时间</li>
+<li>......</li>
+</ul>
+</section>
+
+<section class="slide">
+<h1> Thank you</h1></section>
+
+<p class="deck-status">
+  <span class="deck-status-current"></span>
+  /
+  <span class="deck-status-total"></span>
+</p>
+
+<form action="." method="get" class="goto-form">
+  <label for="goto-slide">Go to slide:</label>
+  <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+  <datalist id="goto-datalist"></datalist>
+  <input type="submit" value="Go">
+</form>
+
+<a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+
+<script src="../js/jquery-1.7.min.js"></script>
+<script src="../js/prettify.js"></script>
+
+<!-- Deck Core and extensions -->
+<script src="../js/deck.js/core/deck.core.js"></script>
+<script src="../js/deck.js/extensions/hash/deck.hash.js"></script>
+<script src="../js/deck.js/extensions/menu/deck.menu.js"></script>
+<script src="../js/deck.js/extensions/goto/deck.goto.js"></script>
+<script src="../js/deck.js/extensions/status/deck.status.js"></script>
+<script src="../js/deck.js/extensions/navigation/deck.navigation.js"></script>
+
+<!-- Specific to this page -->
+<script>
+$(function() {
+  // Deck initialization
+  $.deck('.slide');
+  $('pre code').parent().addClass('prettyprint');
+  prettyPrint();
+});
+</script>
+
+</body>
+</html>
