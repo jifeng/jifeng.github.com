@@ -94,7 +94,25 @@ Cache-Control:max-age=31536000
 <li>Cache-Control的优先级比Expires高，Cache-Control会重写后者的规则</li>
 </ul>
 </section>
+<section class="slide">
+  <h2>游览器缓存</h2>
+  <h3>connect的实现</h3>
+  <pre><code>
+  var oneDay = 86400000;//单位毫秒
 
+  connect()
+    .use(connect.static(__dirname + '/public'))
+
+  connect()
+    .use(connect.static(__dirname + '/public', { maxAge: oneDay }))
+  </code></pre>
+  <h3>实现方式</h3>
+  <h4><a href="https://github.com/visionmedia/send/blob/master/lib/send.js#L467">connect send</a></h4>
+  <pre><code>
+if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max-age=' + (this._maxage / 1000));
+  </code></pre>
+  
+</section>
 
 <section class="slide">
 <h2>游览器缓存</h2>
@@ -174,6 +192,9 @@ Cache-Control:max-age=31536000
 </li>
 <li>缓存时间</li>
 <li>连接数，超时时间</li>
+<li>缓存雪崩</li>
+<li>缓存透传</li>
+<li>数据一致性</li>
 <li>......</li>
 </ul>
 </section>
