@@ -1,0 +1,13 @@
+{
+  "name": "jifeng.github.com",
+  "version": "0.0.1",
+  "description": "jifeng homepage",
+  "keywords": [ "jifeng", "homepage"],
+  "dependencies": {
+    "ejs": "0.8.3",
+    "xml2json": "0.3.2"
+  },
+  "devDependencies": {},
+  "main": "dispatch.js",
+  "engines": { "node": "0.8.x" }
+}
