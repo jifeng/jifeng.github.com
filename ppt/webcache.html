@@ -72,7 +72,7 @@ Expires:Fri, 28 Mar 2014 06:58:19 GMT
 <h3>注意</h3>
 <ul>
 <li>是格林威治时 间（GMT），而不是本地时间</li>
-<li>使用过期时间属性一定要确认你的Web服务器时间设置正确数据合并</li>
+<li>使用过期时间属性一定要确认你的Web服务器时间设置正确</li>
 </ul>
 </section>
 
@@ -86,7 +86,6 @@ Cache-Control:max-age=31536000
 <ul>
 <li>max-age=[秒] — 执行缓存被认为是最新的最长时间。</li>
 <li>no-cache — 强制每次请求直接发送给源服务器</li>
-<li>must-revalidate — 告诉缓存必须遵循所有你给予副本的新鲜度</li>
 </ul>
 <h3>注意</h3>
 <ul>
@@ -116,6 +115,7 @@ if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max
 
 <section class="slide">
 <h2>游览器缓存</h2>
+<h3>304</h3>
 <h3>Last-Modified/If-Modified-Since和<br>ETag/If-None-Match</h3>
 <pre><code>
  Request Header:
@@ -138,6 +138,8 @@ if (!res.getHeader('Cache-Control')) res.setHeader('Cache-Control', 'public, max
 <ul>
 <li>Manifest</li>
 <li>Localstorage</li>
+<li>Sessionstorage</li>
+
 </ul>
 </section>
 
